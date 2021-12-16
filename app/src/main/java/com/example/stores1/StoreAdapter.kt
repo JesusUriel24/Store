@@ -37,6 +37,13 @@ class StoreAdapter(private var stores : MutableList<StoreEntity>, private var li
     override fun getItemCount(): Int {
         TODO("Not yet implemented")
     }
+
+    fun add(store: StoreEntity) {
+        stores.add(store)
+        notifyDataSetChanged()
+
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val binding = ItemStoreBinding.bind(view)
 
