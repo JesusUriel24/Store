@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.stores1.databinding.ActivityMainBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-class MainActivity(override var binding: ActivityMainBinding, override val biding: Any) : AppCompatActivity(), OnClickListener{
+class MainActivity(override var binding: ActivityMainBinding, override val biding: Any,
+                   override val stores: MutableList<StoreEntity>
+) : AppCompatActivity(), OnClickListener {
 
     private lateinit var mBinding: ActivityMainBinding
 
@@ -19,7 +22,7 @@ class MainActivity(override var binding: ActivityMainBinding, override val bidin
         setContentView(binding.root)
 
         mBinding.btnSave.setOnClickListener {
-            val store = StoreEntity (name = mBinding.etName.text.toString().trim())
+            val store = StoreEntity(name = mBinding.etName.text.toString().trim())
             Thread {
                 StoreApplication.database.storeDao().addStore(store)
             }.start()
@@ -36,13 +39,23 @@ class MainActivity(override var binding: ActivityMainBinding, override val bidin
 
     private fun setupRecylcerView() {
         mAdapter = StoreAdapter(mutableListOf(), this)
-        mGridLayout= GridLayoutManager(this, 2)
+        mGridLayout = GridLayoutManager(this, 2)
+        getStore()
 
         mBinding.recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = mGridLayout
             adapter = mAdapter
 
+        }
+    }
+
+    private fun getStore() {
+        doAsync {
+            val store = StoreApplication.database.storeDao().getAllStores()
+            uiThread {
+                mAdapter.setStore(stores)
+            }
         }
     }
 
@@ -53,9 +66,34 @@ class MainActivity(override var binding: ActivityMainBinding, override val bidin
         TODO("Not yet implemented")
     }
 
-    override fun GrinLayoutManager(mainActivity: MainActivity, i: Int): GridLayoutManager {
+    override fun onFavoriteStore(storeEntity: StoreEntity) {
+        storeEntity.isFavorite = !storeEntity.isFavorite
+        doAsync {
+            StoreApplication.database.storeDao().updateStore(storeEntity)
+            uiThread {
+                mAdapter.update(storeEntity)
+            }
+        }
+    }
+
+    override fun doAsync(function: () -> Unit) {
         TODO("Not yet implemented")
     }
 
+    override fun uiThread(function: () -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateStore(storeEntity: StoreEntity) {
+        TODO("Not yet implemented")
+    }
+
+    fun onDeleteStore(storeEntity: StoreEntity) {
+        val items = arrayOf("Eliinar", "Llamar", "Ir al web site")
+
+
+    }
 }
+
+
 

@@ -5,11 +5,13 @@ import com.example.stores1.databinding.ActivityMainBinding
 
 interface OnClickListener {
 
+    abstract val stores: MutableList<StoreEntity>
     abstract val biding: Any
     abstract var binding: ActivityMainBinding
 
     fun onClick(store: StoreEntity)
-    abstract fun GrinLayoutManager(mainActivity: MainActivity, i: Int): GridLayoutManager
-    //fun onFavoriteStore(storeEntity: StoreEntity)
-    //fun onDeleteStore(storeEntity: StoreEntity)
+    fun onFavoriteStore(storeEntity: StoreEntity)
+    abstract fun doAsync(function: () -> Unit)
+    abstract fun uiThread(function: () -> Unit)
+    abstract fun updateStore(storeEntity: StoreEntity)
 }

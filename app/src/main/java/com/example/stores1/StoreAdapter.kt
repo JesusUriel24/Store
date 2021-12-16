@@ -30,6 +30,7 @@ class StoreAdapter(private var stores : MutableList<StoreEntity>, private var li
             setListener(store)
 
             binding.tvName.text = store.name
+            binding.cbFavorite.isChecked = store.isFavorite
 
         }
     }
@@ -44,11 +45,33 @@ class StoreAdapter(private var stores : MutableList<StoreEntity>, private var li
 
     }
 
+    fun setStore(stores: MutableList<StoreEntity>){
+        this.stores = stores
+        notifyDataSetChanged()
+
+    }
+
+    fun update(storeEntity: StoreEntity) {
+        val index = stores.indexOf(storeEntity)
+        if (index != -1){
+            stores.set(index, storeEntity)
+            notifyDataSetChanged(index)
+        }
+
+    }
+
+    private fun notifyDataSetChanged(index: Int) {
+
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val binding = ItemStoreBinding.bind(view)
 
         fun setListener(storeEntity: StoreEntity){
             binding.root.setOnClickListener { listener.onClick(storeEntity) }
+            binding.cbFavorite.setOnClickListener{
+                listener.onFavoriteStore(storeEntity)
+            }
         }
     }
 
